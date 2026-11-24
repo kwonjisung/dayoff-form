@@ -261,7 +261,18 @@ $('bInst').addEventListener('click',async()=>{
   const ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
   const inapp=/KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\//i.test(ua);
   const url=location.href.split('#')[0];
-  if(inapp)showSheet(`<p>카카오톡·네이버 앱 안에서는 바로가기를 만들 수 없어요.</p><ol><li>오른쪽 위(또는 아래) <span class="k">⋮</span> 또는 <span class="k">공유</span>를 누르고</li><li><b>${ios?'Safari로 열기':'다른 브라우저로 열기(Chrome)'}</b>를 누른 뒤</li><li>다시 <b>바탕화면에 바로가기 추가</b> 버튼을 누르세요.</li></ol>`);
+  if(inapp){
+    const kakao=/KAKAOTALK/i.test(ua);
+    const steps=ios
+      ?`<ol><li>화면 오른쪽 아래 <span class="k">⋯</span> 또는 <span class="k">공유</span>를 누르고</li><li><b>다른 브라우저로 열기</b>(Safari)를 누른 뒤</li><li>Safari에서 다시 <b>바탕화면에 바로가기 추가</b> 버튼을 누르세요.</li></ol>`
+      :`<ol><li>화면 <b>오른쪽 아래</b> <span class="k">⋮</span> 버튼을 누르고</li><li><b>다른 앱으로 열기</b>를 누른 뒤 <b>Chrome</b>(또는 삼성 인터넷)을 고르세요.</li><li>새로 열린 화면에서 다시 <b>바탕화면에 바로가기 추가</b> 버튼을 누르세요.</li></ol>`;
+    showSheet(`<p>${kakao?'카카오톡':'이 앱'} 안에서는 바로가기를 만들 수 없어요. 아래 버튼으로 바로 다른 브라우저에서 열거나, 순서대로 따라 하세요.</p><button class="btn" id="openExt" type="button" style="margin-bottom:14px">${kakao?'브라우저로 바로 열기':ios?'Safari로 바로 열기':'Chrome으로 바로 열기'}</button>${steps}`);
+    $('openExt').addEventListener('click',()=>{
+      if(kakao)location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);
+      else if(!ios)location.href='intent://'+url.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';
+      else location.href=url;
+    });
+  }
   else if(ios)showSheet(`<ol><li>Safari 아래쪽 <span class="k">공유 ⬆</span> 버튼을 누르고</li><li>목록을 올려 <b>홈 화면에 추가</b>를 누른 뒤</li><li>오른쪽 위 <b>추가</b>를 누르세요.</li></ol><p>홈 화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
   else if(/Android/.test(ua))showSheet(`<ol><li>브라우저 오른쪽 위 <span class="k">⋮</span> (삼성 인터넷은 아래 <span class="k">≡</span>) 메뉴를 누르고</li><li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 누른 뒤</li><li><b>추가</b>를 누르세요.</li></ol><p>바탕화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
   else showSheet(`<ol><li>Chrome·Edge 주소창 오른쪽의 <span class="k">설치 ⊕</span> 아이콘을 누르거나</li><li>메뉴 <span class="k">⋮</span> → <b>저장 및 공유 → 바로가기 만들기</b>를 누르고</li><li><b>창으로 열기</b>를 체크한 뒤 <b>만들기</b>를 누르세요.</li></ol><p>또는 이 주소를 바탕화면으로 끌어다 놓아도 바로가기가 생겨요.</p>`);
