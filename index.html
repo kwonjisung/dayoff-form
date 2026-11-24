@@ -129,7 +129,7 @@ input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in s
   <section>
     <div class="paper"><canvas id="cv" width="1653" height="2337" aria-label="휴무신청서 미리보기"></canvas><img id="img" alt="휴무신청서 이미지"></div>
     <div class="acts" id="acts">
-      <div class="guide" id="guide" role="status"><b>이인제 팀장님, 요거 누르세요!</b> 아래 빨간 <b>이미지(PNG) 저장</b> 버튼을 누르면 저장돼요. 저장된 이미지를 출력하시면 됩니다</div>
+      <div class="guide" id="guide" role="status"><b><span class="tname">이인제 </span>팀장님, 요거 누르세요!</b> 아래 빨간 <b>이미지(PNG) 저장</b> 버튼을 누르면 저장돼요. 저장된 이미지를 출력하시면 됩니다</div>
       <button class="btn sec" id="bView" type="button">미리보기</button>
       <button class="btn" id="bPng" type="button"><span class="hint" aria-hidden="true"><i></i><i></i><i></i><em></em></span>이미지(PNG) 저장</button>
       <button class="btn sec" id="bPdf" type="button">PDF 저장</button>
@@ -138,7 +138,7 @@ input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in s
     <div class="tip" id="tip">저장 버튼이 안 되면 미리보기 이미지를 길게 누르거나(휴대폰) 오른쪽 클릭(PC)해서 저장하세요.</div>
   </section>
 </main>
-<button class="float" id="float" type="button">이인제 팀장님, 요거 누르세요 <span class="fd" aria-hidden="true"><i></i><i></i><i></i><em></em></span></button>
+<button class="float" id="float" type="button"><span class="tname">이인제 </span>팀장님, 요거 누르세요 <span class="fd" aria-hidden="true"><i></i><i></i><i></i><em></em></span></button>
 <div class="sheet" id="instSheet" role="dialog" aria-modal="true" aria-labelledby="instT" hidden>
   <div class="sbox">
     <h2 id="instT">바탕화면에 바로가기 추가</h2>
@@ -244,6 +244,8 @@ $('mPdf').addEventListener('click',()=>save('pdf'));
 function openView(){draw();$('mImg').src=cv.toDataURL('image/png');$('mbody').classList.remove('zoom');$('mmsg').textContent=(!$('name').value.trim()||!$('d1').value)?'성명이나 날짜가 비어 있어요.':'이미지를 누르면 크게 볼 수 있어요.';$('modal').hidden=false;document.body.style.overflow='hidden';$('mClose').focus()}
 function closeView(){$('modal').hidden=true;document.body.style.overflow='';$('bView').focus()}
 $('bView').addEventListener('click',openView);
+/* 안내 문구의 팀장님 이름은 2026-12-02 0시(한국 시간)부터 자동으로 빠짐 */
+if(Date.now()>=Date.parse('2026-12-02T00:00:00+09:00'))document.querySelectorAll('.tname').forEach(e=>e.remove());
 /* 바탕화면 바로가기 */
 let instEvt=null;
 const standalone=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
