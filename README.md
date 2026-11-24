@@ -12,4 +12,5 @@
 
 ## 구성
 - `index.html` 한 파일 (양식 이미지 포함, 서버 없음)
+- 바탕화면 바로가기(PWA): `manifest.webmanifest`, `sw.js`, 아이콘 png
 - GitHub Pages: Settings → Pages → Branch `main` / `(root)`
