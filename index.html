@@ -274,7 +274,8 @@ $('bInst').addEventListener('click',async()=>{
     });
   }
   else if(ios)showSheet(`<ol><li>Safari 아래쪽 <span class="k">공유 ⬆</span> 버튼을 누르고</li><li>목록을 올려 <b>홈 화면에 추가</b>를 누른 뒤</li><li>오른쪽 위 <b>추가</b>를 누르세요.</li></ol><p>홈 화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
-  else if(/Android/.test(ua))showSheet(`<ol><li>브라우저 오른쪽 위 <span class="k">⋮</span> (삼성 인터넷은 아래 <span class="k">≡</span>) 메뉴를 누르고</li><li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 누른 뒤</li><li><b>추가</b>를 누르세요.</li></ol><p>바탕화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
+  else if(/SamsungBrowser/i.test(ua))showSheet(`<ol><li>화면 <b>오른쪽 아래</b> <span class="k">≡</span> 메뉴를 누르고</li><li><b>현재 페이지 추가</b>를 누른 뒤</li><li><b>홈 화면</b>을 고르고 <b>추가</b>를 누르세요.</li></ol><p>주소창에 <span class="k">⬇ 설치</span> 아이콘이 보이면 그걸 눌러도 돼요. 메뉴에 '현재 페이지 추가'가 없으면 메뉴를 옆으로 넘기거나 <b>도구</b> 안을 확인하세요.</p><p>홈 화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
+  else if(/Android/.test(ua))showSheet(`<ol><li>Chrome 오른쪽 위 <span class="k">⋮</span> 메뉴를 누르고</li><li><b>홈 화면에 추가</b>를 누른 뒤</li><li><b>설치</b> 또는 <b>추가</b>를 누르세요.</li></ol><p>바탕화면에 생긴 <b>휴무신청</b> 아이콘을 누르면 바로 열려요.</p>`);
   else showSheet(`<ol><li>Chrome·Edge 주소창 오른쪽의 <span class="k">설치 ⊕</span> 아이콘을 누르거나</li><li>메뉴 <span class="k">⋮</span> → <b>저장 및 공유 → 바로가기 만들기</b>를 누르고</li><li><b>창으로 열기</b>를 체크한 뒤 <b>만들기</b>를 누르세요.</li></ol><p>또는 이 주소를 바탕화면으로 끌어다 놓아도 바로가기가 생겨요.</p>`);
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('instSheet').hidden)$('instSheet').hidden=true});
