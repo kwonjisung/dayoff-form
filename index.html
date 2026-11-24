@@ -45,6 +45,27 @@ input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in s
 .btn:disabled{opacity:.5;cursor:default}
 .msg{min-height:22px;font-size:14px;color:var(--mute);margin-top:8px}
 .tip{font-size:13px;color:var(--mute);margin-top:4px}
+.guide{display:none;flex:1 1 100%;background:#fff6d6;color:#3d2f00;border:1.5px solid #f2c94c;border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.45}
+.guide b{color:#b42318}
+.acts.on .guide{display:block;margin-bottom:50px;animation:pop .35s ease-out}
+#bPng{position:relative}
+.hint{display:none;position:absolute;left:50%;bottom:100%;transform:translateX(-50%);flex-direction:column;align-items:center;gap:5px;padding-bottom:4px;pointer-events:none}
+.acts.on .hint{display:flex}
+.hint i{width:7px;height:7px;border-radius:50%;background:#e5484d;opacity:.2;animation:dot 1.2s infinite}
+.hint i:nth-child(2){animation-delay:.2s}.hint i:nth-child(3){animation-delay:.4s}
+.hint em{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:12px solid #e5484d;animation:dot 1.2s .6s infinite;opacity:.2}
+.acts.on #bPng{background:#e5484d;animation:pulse 1.6s infinite}
+@keyframes dot{0%,100%{opacity:.2;transform:translateY(-2px)}40%{opacity:1;transform:translateY(2px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.5)}60%{box-shadow:0 0 0 10px rgba(229,72,77,0)}}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hint i,.hint em,.acts.on #bPng,.acts.on .guide{animation:none;opacity:1}}
+.float{display:none;position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;align-items:center;gap:10px;background:#e5484d;color:#fff;border:0;border-radius:999px;padding:12px 20px;min-height:48px;font:700 16px "Noto Sans KR",sans-serif;box-shadow:0 8px 24px rgba(229,72,77,.45);cursor:pointer;white-space:nowrap;animation:pop .35s ease-out}
+.float.show{display:flex}
+.fd{display:flex;flex-direction:column;align-items:center;gap:3px}
+.fd i{width:5px;height:5px;border-radius:50%;background:#fff;opacity:.25;animation:dot 1.2s infinite}
+.fd i:nth-child(2){animation-delay:.2s}.fd i:nth-child(3){animation-delay:.4s}
+.fd em{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #fff;opacity:.25;animation:dot 1.2s .6s infinite}
+@media(prefers-reduced-motion:reduce){.fd i,.fd em{animation:none;opacity:1}}
 .modal{position:fixed;inset:0;z-index:50;background:#1b1e24;display:flex;flex-direction:column}
 .modal[hidden]{display:none}
 .mbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px max(3vw,12px);background:var(--card);color:var(--ink)}
@@ -56,7 +77,7 @@ input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in s
 .mbody img{width:min(820px,100%);height:auto;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.4);cursor:zoom-in}
 .mbody.zoom img{width:1653px;max-width:none;cursor:zoom-out}
 .mmsg{color:#fff;text-align:center;font-size:14px;padding:0 12px 12px;min-height:20px}
-@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}.acts{position:sticky;bottom:0;background:var(--bg);padding:10px 0;margin-top:10px}}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}.acts{margin-top:14px}}
 </style>
 </head>
 <body>
@@ -87,15 +108,17 @@ input:focus,textarea:focus,button:focus-visible{outline:3px solid color-mix(in s
   </form>
   <section>
     <div class="paper"><canvas id="cv" width="1653" height="2337" aria-label="휴무신청서 미리보기"></canvas><img id="img" alt="휴무신청서 이미지"></div>
-    <div class="acts">
+    <div class="acts" id="acts">
+      <div class="guide" id="guide" role="status"><b>이인제 팀장님, 요거 누르세요!</b> 아래 빨간 <b>이미지(PNG) 저장</b> 버튼을 누르면 저장돼요. 저장된 이미지를 출력하시면 됩니다</div>
       <button class="btn sec" id="bView" type="button">미리보기</button>
-      <button class="btn" id="bPng" type="button">이미지(PNG) 저장</button>
+      <button class="btn" id="bPng" type="button"><span class="hint" aria-hidden="true"><i></i><i></i><i></i><em></em></span>이미지(PNG) 저장</button>
       <button class="btn sec" id="bPdf" type="button">PDF 저장</button>
     </div>
     <div class="msg" id="msg"></div>
     <div class="tip" id="tip">저장 버튼이 안 되면 미리보기 이미지를 길게 누르거나(휴대폰) 오른쪽 클릭(PC)해서 저장하세요.</div>
   </section>
 </main>
+<button class="float" id="float" type="button">이인제 팀장님, 요거 누르세요 <span class="fd" aria-hidden="true"><i></i><i></i><i></i><em></em></span></button>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="출력 미리보기" hidden>
   <div class="mbar">
     <b>출력 미리보기</b><span class="msub">A4 · 실제 출력 모양</span>
@@ -158,10 +181,16 @@ function draw(){
   center(name,432,607,11,85);
   try{$('img').src=cv.toDataURL('image/png')}catch(e){}
   remember();
+  const done=name&&$('d1').value&&reason&&phone;
+  $('acts').classList.toggle('on',!!done&&!savedOnce);
+  updFloat();
 }
+let actsSeen=false;
+function updFloat(){const f=document.getElementById('float');if(f)f.classList.toggle('show',$('acts').classList.contains('on')&&!actsSeen)}
+let savedOnce=false;
 bg.onload=()=>{ready=true;draw()};bg.src=BG;
 function syncDates(){const one=$('oneday').checked;$('d2').disabled=one;if(one||!$('d2').value||$('d2').value<$('d1').value)$('d2').value=$('d1').value;$('d2').min=$('d1').value||''}
-$('frm').addEventListener('input',()=>{syncDates();draw()});
+$('frm').addEventListener('input',()=>{savedOnce=false;syncDates();draw()});
 $('frm').addEventListener('change',()=>{syncDates();draw()});
 syncDates();
 $('frm').addEventListener('submit',e=>e.preventDefault());
@@ -179,7 +208,7 @@ async function save(kind){
     if(kind==='png')data=await blobOf();
     else{const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'pt',format:'a4'});doc.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,595.28,841.89);data=doc.output('blob')}
     if(dl)await dl.save({filename:fname(kind),data});
-    else{const u=URL.createObjectURL(data),a=document.createElement('a');a.href=u;a.download=fname(kind);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}msg('저장했어요. 출력해서 팀장님께 제출하세요.');
+    else{const u=URL.createObjectURL(data),a=document.createElement('a');a.href=u;a.download=fname(kind);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}savedOnce=true;$('acts').classList.remove('on');msg('저장했어요. 저장된 이미지를 출력해서 팀장님께 제출하세요.');
   }catch(e){const c=e&&e.code;msg(c==='declined'?'저장을 취소했어요.':c==='rate_limited'?'잠시 후 다시 눌러 주세요.':c==='host_unavailable'?'이 앱에서는 저장이 안 돼요. 브라우저에서 열거나 이미지를 길게 눌러 저장하세요.':'저장하지 못했어요. 미리보기 이미지를 길게 눌러 저장하세요.')}
 }
 $('bPng').addEventListener('click',()=>save('png'));
@@ -188,6 +217,8 @@ $('mPdf').addEventListener('click',()=>save('pdf'));
 function openView(){draw();$('mImg').src=cv.toDataURL('image/png');$('mbody').classList.remove('zoom');$('mmsg').textContent=(!$('name').value.trim()||!$('d1').value)?'성명이나 날짜가 비어 있어요.':'이미지를 누르면 크게 볼 수 있어요.';$('modal').hidden=false;document.body.style.overflow='hidden';$('mClose').focus()}
 function closeView(){$('modal').hidden=true;document.body.style.overflow='';$('bView').focus()}
 $('bView').addEventListener('click',openView);
+$('float').addEventListener('click',()=>{$('acts').scrollIntoView({behavior:'smooth',block:'center'})});
+try{const io=new IntersectionObserver(es=>{actsSeen=es[0].isIntersecting;updFloat()},{threshold:.6});io.observe($('bPng'))}catch(e){}
 $('mClose').addEventListener('click',closeView);
 $('mImg').addEventListener('click',()=>$('mbody').classList.toggle('zoom'));
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal'||e.target.id==='mbody')closeView()});
